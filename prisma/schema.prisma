@@ -1,0 +1,207 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  phone         String?   @unique
+  age           Int?
+  bio           String?
+  interests     String[]  @default([])
+  vipLevel      Int       @default(0)
+  isVip         Boolean   @default(false)
+  vipExpiresAt  DateTime?
+  freeSpins     Int       @default(5)
+  totalSpins    Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  matches       Match[]   @relation("UserMatches")
+  matchedWith   Match[]   @relation("MatchedWith")
+  connections   Connection[] @relation("UserConnections")
+  connectedWith Connection[] @relation("ConnectedWith")
+  posts         Post[]
+  reactions     Reaction[]
+  gifts         Gift[]
+  receivedGifts Gift[]    @relation("GiftReceiver")
+  payments      Payment[]
+  
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Match {
+  id        String   @id @default(cuid())
+  userId    String
+  matchedId String
+  status    MatchStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user    User @relation("UserMatches", fields: [userId], references: [id])
+  matched User @relation("MatchedWith", fields: [matchedId], references: [id])
+  
+  @@unique([userId, matchedId])
+  @@map("matches")
+}
+
+model Connection {
+  id        String   @id @default(cuid())
+  userId    String
+  connectedId String
+  status    ConnectionStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      User @relation("UserConnections", fields: [userId], references: [id])
+  connected User @relation("ConnectedWith", fields: [connectedId], references: [id])
+  
+  @@unique([userId, connectedId])
+  @@map("connections")
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  userId    String
+  content   String?
+  imageUrl  String?
+  videoUrl  String?
+  type      PostType @default(TEXT)
+  isStory    Boolean  @default(false)
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      User @relation(fields: [userId], references: [id])
+  reactions Reaction[]
+  
+  @@map("posts")
+}
+
+model Reaction {
+  id     String @id @default(cuid())
+  userId String
+  postId String
+  type   ReactionType
+  
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+  
+  @@unique([userId, postId])
+  @@map("reactions")
+}
+
+model Gift {
+  id         String @id @default(cuid())
+  senderId   String
+  receiverId String
+  type       String
+  value      Float
+  createdAt  DateTime @default(now())
+  
+  sender   User @relation("GiftSender", fields: [senderId], references: [id])
+  receiver User @relation("GiftReceiver", fields: [receiverId], references: [id])
+  
+  @@map("gifts")
+}
+
+model Payment {
+  id          String      @id @default(cuid())
+  userId      String
+  amount      Float
+  currency    String      @default("USD")
+  type        PaymentType
+  status      PaymentStatus @default(PENDING)
+  stripeId    String?
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  user User @relation(fields: [userId], references: [id])
+  
+  @@map("payments")
+}
+
+enum MatchStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum ConnectionStatus {
+  ACTIVE
+  BLOCKED
+  DELETED
+}
+
+enum PostType {
+  TEXT
+  IMAGE
+  VIDEO
+}
+
+enum ReactionType {
+  LIKE
+  LOVE
+  FIRE
+  LAUGH
+  WOW
+}
+
+enum PaymentType {
+  VIP_SUBSCRIPTION
+  SPINS_PACKAGE
+  GIFT_PURCHASE
+  POST_BOOST
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}

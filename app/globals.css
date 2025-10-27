@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: var(--font-inter), system-ui, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-poppins), system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-vip-500 to-vip-600 hover:from-vip-600 hover:to-vip-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 text-vip-600 font-semibold py-3 px-6 rounded-full border-2 border-vip-200 hover:border-vip-300 transition-all duration-300 shadow-md hover:shadow-lg;
+  }
+  
+  .card {
+    @apply bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100;
+  }
+  
+  .vip-glow {
+    @apply relative;
+  }
+  
+  .vip-glow::before {
+    content: '';
+    @apply absolute inset-0 rounded-full bg-gradient-to-r from-vip-400 to-vip-600 opacity-75 blur-lg -z-10;
+  }
+  
+  .spin-container {
+    @apply relative w-80 h-80 mx-auto;
+  }
+  
+  .spin-wheel {
+    @apply w-full h-full rounded-full bg-gradient-to-br from-vip-400 via-vip-500 to-vip-600 shadow-2xl;
+  }
+  
+  .spin-button {
+    @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-white rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center cursor-pointer;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-vip-500 to-vip-700 bg-clip-text text-transparent;
+  }
+  
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+}
