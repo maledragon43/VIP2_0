@@ -1,0 +1,90 @@
+1️⃣ Project Overview
+
+Project Name: VIP 2.0
+Category: Social / Instant Connection App
+Mission: Build real, spontaneous human connections through live interaction and gamified chance.
+
+🎯 Concept
+
+VIP 2.0 is a next-generation social app where users meet instantly by live video through a fun mechanic called the VIP Spin.
+Each spin creates a new opportunity to meet someone real — talk, laugh, match… or spin again.
+
+💡 VIP 2.0 turns curiosity and randomness into meaningful connections.
+
+⸻
+
+🌀 2️⃣ Core Mechanic — “The VIP Spin”
+
+🔧 How It Works
+	1.	The user taps the glowing sphere to start the spin.
+	2.	The system instantly pairs them with another active user (by region, gender, etc.).
+	3.	A live video call opens immediately.
+	4.	After the chat, the user can choose:
+	•	✅ “VIP Connect” → stay connected and chat later.
+	•	🔁 “Spin Again” → meet a new person.
+
+🎬 Experience:
+Smooth animation, roulette-style sound, short “matching” delay, instant dopamine hit — curiosity, surprise, and fun.
+
+Core MVP Features
+Feature
+Description
+Signup / Login
+Via email, Google, Apple, or phone.
+Spin Screen
+Main interface with animated roulette & action button.
+Video + Text Chat
+Real-time communication via WebRTC + WebSocket.
+VIP Connect
+Save matches and reopen conversations later.
+User Profile
+Photo, bio, age, interests, VIP level.
+Free Spins
+5 free spins per day for the first 2 weeks. After that, users can wait until the next day or buy extra spins instantly.
+Paid Spins
+Instant purchase of additional spins ($1 – $5).
+Virtual Gifts
+Animated emojis or gifts sent during live chat.
+Live Group Mode
+Join / create video rooms (3 – 6 people, public or VIP-only). Builds community & energy.
+
+4️⃣ Phase 2 Feature — “Eye Me” (Social Layer)
+
+Eye Me adds a social dimension for users who connected through a VIP Spin.
+
+💡 Purpose
+
+Increase engagement & retention by letting users share moments beyond the spin.
+
+🧠 How It Works
+	•	When two users connect (VIP Connect), they unlock an Eye Me Profile.
+	•	They can post:
+	•	short statuses,
+	•	photos,
+	•	or 10-second videos.
+	•	Connections can like ❤️, react 🔥, comment 😂, or send virtual gifts.
+	•	Stories disappear after 24 hours → creates a sense of immediacy.
+
+🌈 Value
+	•	Builds emotional depth.
+	•	Keeps users returning daily.
+	•	Evolves into a mini social network inside VIP 2.0.
+
+Monetization — Freemium + In-App Purchases
+
+VIP Subscription
+Unlimited spins, premium filters, ad-free experience
+$6.99 – $12.99 / month
+Paid Spins
+Buy additional spins anytime
+$1 – $5
+Virtual Gifts
+Animated gifts / effects during chats & stories
+$0.99 – $99
+Post Boost (Eye Me)
+Promote your story / post to your connections
+from $2.99
+Special Events
+Themed nights & VIP Challenges
+
+💎 Micro-transactions create recurring revenue and social engagement.
