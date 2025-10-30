@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Mail, Lock, User, Eye, EyeOff, Sparkles } from 'lucide-react'
@@ -8,7 +8,12 @@ import { Mail, Lock, User, Eye, EyeOff, Sparkles } from 'lucide-react'
 export default function SignUpPage() {
   const [formData, setFormData] = useState({
     name: '',
+    username: '',
     email: '',
+    phone: '',
+    dateOfBirth: '',
+    gender: '',
+    country: '',
     password: '',
     confirmPassword: ''
   })
@@ -33,10 +38,44 @@ export default function SignUpPage() {
       newErrors.name = 'Name is required'
     }
 
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required'
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    // Username optional but if provided, basic constraints
+    if (formData.username && !/^[a-zA-Z0-9_.-]{3,20}$/.test(formData.username)) {
+      newErrors.username = 'Username must be 3-20 chars, letters/numbers/_/./-'
+    }
+
+    // Require at least one of email or phone
+    if (!formData.email.trim() && !formData.phone.trim()) {
+      newErrors.email = 'Email or phone is required'
+      newErrors.phone = 'Email or phone is required'
+    }
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Email is invalid'
+    }
+    if (formData.phone && !/^[+\d][\d\s().-]{6,}$/.test(formData.phone)) {
+      newErrors.phone = 'Phone number is invalid'
+    }
+
+    // Date of Birth must yield age >= 18
+    if (!formData.dateOfBirth) {
+      newErrors.dateOfBirth = 'Date of birth is required'
+    } else {
+      const today = new Date()
+      const dob = new Date(formData.dateOfBirth)
+      let age = today.getFullYear() - dob.getFullYear()
+      const m = today.getMonth() - dob.getMonth()
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--
+      }
+      if (isNaN(age)) {
+        newErrors.dateOfBirth = 'Invalid date of birth'
+      } else if (age < 18) {
+        newErrors.dateOfBirth = 'You must be at least 18 years old'
+      }
+    }
+
+    // Country required (auto or manual)
+    if (!formData.country.trim()) {
+      newErrors.country = 'Country is required'
     }
 
     if (!formData.password) {
@@ -52,6 +91,23 @@ export default function SignUpPage() {
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
+
+  // Try to auto-detect country from locale on mount
+  useEffect(() => {
+    if (!formData.country) {
+      try {
+        const locale = Intl.DateTimeFormat().resolvedOptions().locale
+        const regionMatch = locale.match(/[-_](\w{2})$/)
+        if (regionMatch) {
+          const region = regionMatch[1].toUpperCase()
+          setFormData(prev => ({ ...prev, country: region }))
+        }
+      } catch {
+        // ignore
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -121,6 +177,28 @@ export default function SignUpPage() {
               {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
             </div>
 
+            {/* Username (optional) */}
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                Username (optional)
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-vip-500 focus:border-transparent ${
+                    errors.username ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Choose a username"
+                />
+              </div>
+              {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
+            </div>
+
             {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -141,6 +219,90 @@ export default function SignUpPage() {
                 />
               </div>
               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            </div>
+
+            {/* Phone */}
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                Phone Number
+              </label>
+              <div className="relative">
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className={`w-full pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-vip-500 focus:border-transparent ${
+                    errors.phone ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Enter your phone number"
+                />
+              </div>
+              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+            </div>
+
+            {/* Date of Birth */}
+            <div>
+              <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-2">
+                Date of Birth
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  id="dateOfBirth"
+                  name="dateOfBirth"
+                  value={formData.dateOfBirth}
+                  onChange={handleChange}
+                  className={`w-full pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-vip-500 focus:border-transparent ${
+                    errors.dateOfBirth ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  max={new Date().toISOString().split('T')[0]}
+                />
+              </div>
+              {errors.dateOfBirth && <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth}</p>}
+            </div>
+
+            {/* Gender (optional) */}
+            <div>
+              <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-2">
+                Gender (optional)
+              </label>
+              <select
+                id="gender"
+                name="gender"
+                value={formData.gender}
+                onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value }))}
+                className={`w-full pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-vip-500 focus:border-transparent ${
+                  errors.gender ? 'border-red-500' : 'border-gray-300'
+                }`}
+              >
+                <option value="">Prefer not to say</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+                <option value="non-binary">Non-binary</option>
+                <option value="other">Other</option>
+              </select>
+              {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+            </div>
+
+            {/* Country */}
+            <div>
+              <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
+                Country
+              </label>
+              <input
+                type="text"
+                id="country"
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                className={`w-full pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-vip-500 focus:border-transparent ${
+                  errors.country ? 'border-red-500' : 'border-gray-300'
+                }`}
+                placeholder="Enter your country (auto-detected if possible)"
+              />
+              {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
             </div>
 
             {/* Password */}

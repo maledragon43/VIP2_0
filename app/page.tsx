@@ -20,7 +20,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       <Header />
-      <main className="mt-10">
+      <main className="mt-[5.5rem]">
         <HeroSection />
         <FeaturesSection />
         <HowItWorksSection />
